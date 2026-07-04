@@ -1,0 +1,32 @@
+@page
+@model IndexModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card text-center shadow-sm"><div class="card-body">
+        <h6 class="text-muted">Products</h6><h2>@Model.ProductCount</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center shadow-sm"><div class="card-body">
+        <h6 class="text-muted">Suppliers</h6><h2>@Model.SupplierCount</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center shadow-sm"><div class="card-body">
+        <h6 class="text-muted">Sales</h6><h2>@Model.SaleCount</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center shadow-sm border-warning"><div class="card-body">
+        <h6 class="text-muted">Low stock</h6><h2 class="text-warning">@Model.LowStock.Count</h2></div></div></div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-warning-subtle fw-bold">Low-stock alerts</div>
+    <div class="card-body p-0">
+        <table class="table mb-0">
+            <thead><tr><th>Name</th><th>Qty</th><th>Supplier</th></tr></thead>
+            <tbody>
+            @foreach (var p in Model.LowStock)
+            {
+                <tr><td>@p.Name</td><td><span class="badge bg-warning text-dark">@p.Quantity</span></td><td>@p.Supplier?.Name</td></tr>
+            }
+            @if (Model.LowStock.Count == 0) { <tr><td colspan="3" class="text-muted">No low-stock items.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
