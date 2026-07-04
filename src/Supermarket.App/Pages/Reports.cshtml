@@ -1,0 +1,50 @@
+@page
+@model ReportsModel
+@{ ViewData["Title"] = "Reports"; }
+
+<h2 class="mb-3">Reports</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold">Low stock</div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Product</th><th>Qty</th></tr></thead>
+                <tbody>
+                @foreach (var p in Model.LowStock) { <tr><td>@p.Name</td><td><span class="badge bg-warning text-dark">@p.Quantity</span></td></tr> }
+                @if (Model.LowStock.Count == 0) { <tr><td colspan="2" class="text-muted">None.</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold">Sales by product</div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Product</th><th>Units</th><th class="text-end">Revenue</th></tr></thead>
+                <tbody>
+                @foreach (var r in Model.SalesByProduct) { <tr><td>@r.Product</td><td>@r.Units</td><td class="text-end">@r.Revenue.ToString("0.00")</td></tr> }
+                @if (Model.SalesByProduct.Count == 0) { <tr><td colspan="3" class="text-muted">No sales yet.</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold">Products by category</div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Category</th><th>Products</th><th>Units</th></tr></thead>
+                <tbody>
+                @foreach (var r in Model.ByCategory) { <tr><td>@r.Category</td><td>@r.Products</td><td>@r.Units</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold">Supplier stock</div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Supplier</th><th>Products</th><th>Units</th></tr></thead>
+                <tbody>
+                @foreach (var r in Model.SupplierStock) { <tr><td>@r.Supplier</td><td>@r.Products</td><td>@r.Units</td></tr> }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
