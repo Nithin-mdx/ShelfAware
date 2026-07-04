@@ -1,0 +1,67 @@
+@page
+@model SearchModel
+@{ ViewData["Title"] = "Search"; }
+
+<h2 class="mb-3">Search products</h2>
+
+<form method="get" class="row g-2 mb-3" id="search-form">
+    <div class="col-md-9 position-relative">
+        <input class="form-control" asp-for="Term" id="search-box"
+               placeholder="Search by name, barcode, category or supplier" autocomplete="off" autofocus />
+        @* our own suggestion dropdown, filled by the script below *@
+        <div id="suggestions" class="list-group position-absolute w-100 shadow" style="z-index:10; display:none;"></div>
+    </div>
+    <div class="col-md-3"><button class="btn btn-success w-100">Search</button></div>
+</form>
+@if (Model.Searched)
+{
+    <p class="text-muted">@Model.Results.Count result(s).</p>
+    <table class="table table-striped bg-white shadow-sm">
+        <thead class="table-dark"><tr><th>Id</th><th>Name</th><th>Barcode</th><th>Price</th><th>Qty</th><th>Category</th><th>Supplier</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var p in Model.Results)
+        {
+            <tr><td>@p.Id</td><td>@p.Name</td><td>@p.Barcode</td><td>@p.Price.ToString("0.00")</td>
+                <td>@p.Quantity</td><td>@p.Category?.Name</td><td>@p.Supplier?.Name</td>
+                <td><a class="btn btn-sm btn-outline-primary" asp-page="/Edit" asp-route-id="@p.Id">View / Edit</a></td></tr>
+        }
+        @if (Model.Results.Count == 0) { <tr><td colspan="8" class="text-muted">No matches.</td></tr> }
+        </tbody>
+    </table>
+}
+
+<script>
+    // product names from the server, used for live suggestions
+    const names = [@Html.Raw(string.Join(",", Model.Names.Select(n => "\"" + n.Replace("\"", "\\\"") + "\"")))];
+    const box = document.getElementById("search-box");
+    const list = document.getElementById("suggestions");
+
+    box.addEventListener("input", function () {
+        const term = box.value.trim().toLowerCase();
+        list.innerHTML = "";
+        if (term === "") { list.style.display = "none"; return; }
+
+        // show names that start with what was typed
+        const matches = names.filter(n => n.toLowerCase().startsWith(term)).slice(0, 8);
+        if (matches.length === 0) { list.style.display = "none"; return; }
+
+        for (const name of matches) {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "list-group-item list-group-item-action";
+            item.textContent = name;
+            item.onclick = function () {
+                box.value = name;
+                list.style.display = "none";
+                document.getElementById("search-form").submit();   // search right away on click
+            };
+            list.appendChild(item);
+        }
+        list.style.display = "block";
+    });
+
+    // hide the dropdown when clicking anywhere else
+    document.addEventListener("click", function (e) {
+        if (e.target !== box) list.style.display = "none";
+    });
+</script>
