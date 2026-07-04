@@ -1,0 +1,33 @@
+@page
+@model SalesModel
+@{ ViewData["Title"] = "Sales history"; }
+
+<h2 class="mb-3">Sales history</h2>
+
+@if (Model.Sales.Count == 0)
+{
+    <p class="text-muted">No sales recorded yet. Make one on the <a asp-page="/Sell">Sell</a> page.</p>
+}
+
+@foreach (var s in Model.Sales)
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-header d-flex justify-content-between">
+            <span class="fw-bold">Sale #@s.Id — @s.Date.ToString("g")</span>
+            <span class="fw-bold">@s.Total.ToString("0.00")</span>
+        </div>
+        <table class="table table-sm mb-0">
+            <thead><tr><th>Product</th><th>Qty</th><th>Unit price</th><th class="text-end">Line total</th></tr></thead>
+            <tbody>
+            @foreach (var i in s.Items)
+            {
+                <tr>
+                    <td>@i.Product?.Name</td><td>@i.Quantity</td>
+                    <td>@i.UnitPrice.ToString("0.00")</td>
+                    <td class="text-end">@i.LineTotal.ToString("0.00")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

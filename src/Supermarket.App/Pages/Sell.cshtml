@@ -1,0 +1,48 @@
+@page
+@model SellModel
+@{ ViewData["Title"] = "Sell"; }
+
+<h2 class="mb-3">Record a sale</h2>
+
+@if (Model.Error != null) { <div class="alert alert-danger">@Model.Error</div> }
+
+@if (Model.Receipt != null)
+{
+    <div class="card shadow-sm mb-4 border-success">
+        <div class="card-header bg-success text-white fw-bold">
+            Receipt — Sale #@Model.Receipt.Id (@Model.Receipt.Date.ToString("g"))
+        </div>
+        <table class="table mb-0">
+            <thead><tr><th>Product</th><th>Qty</th><th>Unit</th><th class="text-end">Line total</th></tr></thead>
+            <tbody>
+            @foreach (var i in Model.Receipt.Items)
+            {
+                <tr><td>@Model.ProductName(i.ProductId)</td><td>@i.Quantity</td>
+                    <td>@i.UnitPrice.ToString("0.00")</td><td class="text-end">@i.LineTotal.ToString("0.00")</td></tr>
+            }
+            </tbody>
+            <tfoot><tr class="fw-bold"><td colspan="3">TOTAL</td><td class="text-end">@Model.Receipt.Total.ToString("0.00")</td></tr></tfoot>
+        </table>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="card-header fw-bold">New sale (up to 5 items)</div>
+    <div class="card-body">
+        <form method="post">
+            @for (int i = 0; i < 5; i++)
+            {
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <select class="form-select" name="productId">
+                            <option value="0">-- Product --</option>
+                            @foreach (var p in Model.All) { <option value="@p.Id">@p.Name — @p.Price.ToString("0.00") (stock @p.Quantity)</option> }
+                        </select>
+                    </div>
+                    <div class="col-md-3"><input class="form-control" type="number" name="quantity" min="0" value="0" /></div>
+                </div>
+            }
+            <button class="btn btn-success mt-2">Record sale</button>
+        </form>
+    </div>
+</div>
