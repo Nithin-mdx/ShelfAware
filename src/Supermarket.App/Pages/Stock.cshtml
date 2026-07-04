@@ -1,0 +1,49 @@
+@page
+@model StockModel
+@{ ViewData["Title"] = "Stock"; }
+
+<h2 class="mb-3">Stock control</h2>
+
+@if (Model.Message != null) { <div class="alert alert-success">@Model.Message</div> }
+@if (Model.Error != null) { <div class="alert alert-danger">@Model.Error</div> }
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold text-success">Restock (+)</div><div class="card-body">
+            <form method="post" asp-page-handler="Restock" class="row g-2">
+                <div class="col"><select class="form-select" name="productId" required>
+                    <option value="">-- Product --</option>
+                    @foreach (var p in Model.All) { <option value="@p.Id">@p.Name (@p.Quantity)</option> }
+                </select></div>
+                <div class="col-auto"><input class="form-control" type="number" name="amount" min="1" placeholder="Qty" required /></div>
+                <div class="col-auto"><button class="btn btn-success">Add stock</button></div>
+            </form>
+        </div></div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm"><div class="card-header fw-bold text-danger">Adjust (-)</div><div class="card-body">
+            <form method="post" asp-page-handler="Reduce" class="row g-2">
+                <div class="col"><select class="form-select" name="productId" required>
+                    <option value="">-- Product --</option>
+                    @foreach (var p in Model.All) { <option value="@p.Id">@p.Name (@p.Quantity)</option> }
+                </select></div>
+                <div class="col-auto"><input class="form-control" type="number" name="amount" min="1" placeholder="Qty" required /></div>
+                <div class="col-auto"><button class="btn btn-danger">Reduce</button></div>
+            </form>
+        </div></div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-warning-subtle fw-bold">Low-stock alerts</div>
+    <table class="table mb-0">
+        <thead><tr><th>Name</th><th>Qty</th><th>Supplier</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model.LowStock)
+        {
+            <tr><td>@p.Name</td><td><span class="badge bg-warning text-dark">@p.Quantity</span></td><td>@p.Supplier?.Name</td></tr>
+        }
+        @if (Model.LowStock.Count == 0) { <tr><td colspan="3" class="text-muted">No low-stock items.</td></tr> }
+        </tbody>
+    </table>
+</div>
